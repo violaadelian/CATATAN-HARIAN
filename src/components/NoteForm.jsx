@@ -35,7 +35,7 @@ export default function NoteForm({ onSave, editingNote, cancelEdit }) {
     <form onSubmit={handleSubmit} className="space-y-4 rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-lg shadow-slate-200/30 transition dark:border-slate-700 dark:bg-slate-900/80 dark:shadow-slate-950/30">
       <div>
         <h2 className="text-xl font-semibold">{editingNote ? 'Edit Catatan' : 'Tambah Catatan Baru'}</h2>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400"> menyimpan catatan harian Anda.</p>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400"> Catatan Harian Tersimpan.</p>
       </div>
 
       <div>
