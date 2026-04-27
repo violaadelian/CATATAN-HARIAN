@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const categoryOptions = ['Kuliah', 'Pribadi', 'Kerja'];
+const categoryOptions = ['Kuliah', 'Pribadi', 'Kerja', 'Keuangan']
 
 export default function NoteForm({ onSave, editingNote, cancelEdit }) {
   const [title, setTitle] = useState('');
