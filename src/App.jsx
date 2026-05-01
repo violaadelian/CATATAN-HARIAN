@@ -6,6 +6,8 @@ import SearchBar from './components/SearchBar';
 import Note from './models/Note';
 import { fetchPosts } from './services/api';
 
+const DEFAULT_CATEGORIES = ['Kuliah', 'Pribadi', 'Kerja', 'Keuangan'];
+
 function App() {
   const [notes, setNotes] = useState([]);
   const [editingNote, setEditingNote] = useState(null);
@@ -13,11 +15,22 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('catatanHarianDarkMode');
     if (storedTheme !== null) {
       setDarkMode(JSON.parse(storedTheme));
+    }
+
+    const storedCategories = localStorage.getItem('catatanHarianCategories');
+    if (storedCategories) {
+      try {
+        setCategories(JSON.parse(storedCategories));
+      } catch (err) {
+        console.error('Failed to parse categories:', err);
+        setCategories(DEFAULT_CATEGORIES);
+      }
     }
   }, []);
 
@@ -25,6 +38,10 @@ function App() {
     localStorage.setItem('catatanHarianDarkMode', JSON.stringify(darkMode));
     document.documentElement.classList.toggle('dark', darkMode);
   }, [darkMode]);
+
+  useEffect(() => {
+    localStorage.setItem('catatanHarianCategories', JSON.stringify(categories));
+  }, [categories]);
 
   useEffect(() => {
     const loadInitialNotes = async () => {
@@ -96,6 +113,13 @@ function App() {
     }
   };
 
+  const handleAddCategory = (newCategory) => {
+    const trimmedCategory = newCategory.trim();
+    if (trimmedCategory && !categories.includes(trimmedCategory)) {
+      setCategories((prevCategories) => [...prevCategories, trimmedCategory]);
+    }
+  };
+
   useEffect(() => {
     localStorage.setItem('catatanHarianNotes', JSON.stringify(notes));
   }, [notes]);
@@ -130,19 +154,18 @@ function App() {
           <div className="space-y-3">
             <h1 className="text-3xl font-semibold sm:text-4xl">Catatan Harian</h1>
             <p className="max-w-3xl text-sm text-slate-600 dark:text-slate-300 sm:text-base">
-              Tambahkan, cari, edit, dan hapus catatan harian Anda. Data awal juga dimuat dari API publik untuk menampilkan contoh catatan.
+              Tambahkan, cari, edit, dan hapus catatan harian Anda. 
             </p>
           </div>
 
           <div className="mt-6 grid gap-4 lg:grid-cols-[1.3fr_1fr] lg:items-start">
-            <NoteForm onSave={handleSaveNote} editingNote={editingNote} cancelEdit={handleCancelEdit} />
+            <NoteForm onSave={handleSaveNote} editingNote={editingNote} cancelEdit={handleCancelEdit} categories={categories} onAddCategory={handleAddCategory} />
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900">
               <h2 className="text-xl font-semibold">Cari Catatan</h2>
               <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Cari berdasarkan judul atau isi secara real-time.</p>
               <SearchBar value={searchText} onChange={setSearchText} />
               <div className="mt-4 rounded-2xl bg-slate-100 p-4 text-sm text-slate-700 dark:bg-slate-800 dark:text-slate-300">
                 <p><strong>Total catatan:</strong> {filteredNotes.length}</p>
-                <p className="mt-2">Gunakan filter untuk mempercepat pencarian catatan penting.</p>
               </div>
             </div>
           </div>
